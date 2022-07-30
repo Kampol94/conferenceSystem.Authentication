@@ -1,0 +1,1 @@
+﻿global using AuthenticationService.Domain.Common.Contracts;
