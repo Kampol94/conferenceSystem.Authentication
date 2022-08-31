@@ -1,3 +1,1 @@
-# Authentication Service
-
-part of conferenceSystem
+# Authentication Service part of the conference system
