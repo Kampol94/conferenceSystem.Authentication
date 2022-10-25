@@ -1,0 +1,30 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: conferencesystemmanagement 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: conferencesystemmanagement
+  template:
+    metadata:
+      labels:
+        app: conferencesystemmanagement 
+    spec:
+      containers:
+        - name: conferencesystemmanagement 
+          image: conferencesystem.azurecr.io/conferencesystemmanagement
+          ports:
+            - containerPort: 80
+              protocol: TCP
+          env:
+            - name: ASPNETCORE_URLS
+              value: http://+:80
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Development
+            - name: ConnectionStrings__DefaultConnection
+              valueFrom:
+                secretKeyRef:
+                  name: mmanagementmssql
+                  key: constr
