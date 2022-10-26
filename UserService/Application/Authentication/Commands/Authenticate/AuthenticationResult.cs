@@ -1,4 +1,6 @@
-﻿namespace UserService.Application.Authentication.Authenticate;
+﻿using UserService.Application.Authentication.Commands.Authenticate;
+
+namespace UserService.Application.Authentication.Authenticate;
 
 public class AuthenticationResult
 {
@@ -8,15 +10,15 @@ public class AuthenticationResult
         AuthenticationError = authenticationError;
     }
 
-    public AuthenticationResult(UserDto user)
+    public AuthenticationResult(Token token)
     {
         IsAuthenticated = true;
-        User = user;
+        Token = token;
     }
 
     public bool IsAuthenticated { get; }
 
-    public string AuthenticationError { get; }
+    public string? AuthenticationError { get; }
 
-    public UserDto User { get; }
+    public Token? Token { get; }
 }

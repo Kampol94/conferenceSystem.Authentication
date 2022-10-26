@@ -19,7 +19,7 @@ public class UsersCounter : IUsersCounter
 
         const string sql = "SELECT " +
                            "COUNT(*) " +
-                           "FROM [users].[v_Users] AS [User]" +
+                           "FROM [users].[Users] AS [User]" +
                            "WHERE [User].[Login] = @Login";
         return connection.QuerySingle<int>(
             sql,

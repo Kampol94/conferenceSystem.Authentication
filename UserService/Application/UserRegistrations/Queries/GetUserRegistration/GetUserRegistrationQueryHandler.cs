@@ -25,7 +25,7 @@ internal class GetUserRegistrationQueryHandler : IQueryHandler<GetUserRegistrati
                            "[UserRegistration].[LastName], " +
                            "[UserRegistration].[Name], " +
                            "[UserRegistration].[StatusCode] " +
-                           "FROM [users].[v_UserRegistrations] AS [UserRegistration] " +
+                           "FROM [users].[UserRegistrations] AS [UserRegistration] " +
                            "WHERE [UserRegistration].[Id] = @UserRegistrationId";
 
         return await connection.QuerySingleAsync<UserRegistrationDto>(

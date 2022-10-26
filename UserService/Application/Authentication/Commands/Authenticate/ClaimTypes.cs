@@ -1,6 +1,6 @@
-﻿namespace UserService.Application.IdentityServer;
+﻿namespace UserService.Application.Authentication.Commands.Authenticate;
 
-internal class ClaimTypes
+internal class MyClaimTypes
 {
     internal const string Roles = "roles";
     internal const string Email = "email";

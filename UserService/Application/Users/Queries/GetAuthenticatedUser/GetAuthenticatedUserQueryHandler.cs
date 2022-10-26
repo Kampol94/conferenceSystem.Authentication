@@ -29,7 +29,7 @@ internal class GetAuthenticatedUserQueryHandler : IQueryHandler<GetAuthenticated
                            "[User].[Login], " +
                            "[User].[Email], " +
                            "[User].[Name] " +
-                           "FROM [users].[v_Users] AS [User] " +
+                           "FROM [users].[Users] AS [User] " +
                            "WHERE [User].[Id] = @UserId";
 
         return await connection.QuerySingleAsync<UserDto>(sql, new

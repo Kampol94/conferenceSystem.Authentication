@@ -19,7 +19,7 @@ internal class GetUserPermissionsQueryHandler : IQueryHandler<GetUserPermissions
 
         const string sql = "SELECT " +
                            "[UserPermission].[PermissionCode] AS [Code] " +
-                           "FROM [users].[v_UserPermissions] AS [UserPermission] " +
+                           "FROM [users].[UserPermissions] AS [UserPermission] " +
                            "WHERE [UserPermission].UserId = @UserId";
         var permissions = await connection.QueryAsync<UserPermissionDto>(sql, new { request.UserId });
 

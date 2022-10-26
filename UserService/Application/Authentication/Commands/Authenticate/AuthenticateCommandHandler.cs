@@ -1,7 +1,12 @@
-﻿using System.Security.Claims;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using Dapper;
+using Microsoft.IdentityModel.Tokens;
+using UserService.Application.Authentication.Commands.Authenticate;
 using UserService.Application.Contracts;
 using UserService.Application.Contracts.Commands;
+using UserService.Domain.Users;
 
 namespace UserService.Application.Authentication.Authenticate;
 
@@ -25,10 +30,10 @@ public class AuthenticateCommandHandler : ICommandHandler<AuthenticateCommand, A
                            "[User].[Email], " +
                            "[User].[IsActive], " +
                            "[User].[Password] " +
-                           "FROM [users].[v_Users] AS [User] " +
+                           "FROM [users].[Users] AS [User] " +
                            "WHERE [User].[Login] = @Login";
 
-        var user = await connection.QuerySingleOrDefaultAsync<UserDto>(
+        var user = await connection.QuerySingleOrDefaultAsync<User>(
             sql,
             new
             {
@@ -50,12 +55,25 @@ public class AuthenticateCommandHandler : ICommandHandler<AuthenticateCommand, A
             return new AuthenticationResult("Incorrect login or password");
         }
 
-        user.Claims = new List<Claim>
-        {
-            new Claim(ClaimTypes.Name, user.Name),
-            new Claim(ClaimTypes.Email, user.Email)
-        };
+        var token = GenerateJwtToken(user);
 
-        return new AuthenticationResult(user);
+        return new AuthenticationResult(token);
+    }
+
+    private static Token GenerateJwtToken(User user)
+    {
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var key = Encoding.ASCII.GetBytes("BigSecret"); //TODO: change to appSetting 
+        var tokenDescriptor = new SecurityTokenDescriptor
+        {
+            Subject = new ClaimsIdentity(new[] {
+                new Claim(MyClaimTypes.Name, user.Name),
+                new Claim(MyClaimTypes.Email, user.Email)
+            }),
+            Expires = DateTime.UtcNow.AddDays(7),
+            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+        };
+        var token = tokenHandler.CreateToken(tokenDescriptor);
+        return  new Token(tokenHandler.WriteToken(token));
     }
 }

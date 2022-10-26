@@ -10,17 +10,17 @@ public class User : BaseEntity
 
     private string _login;
 
-    private string _password;
+    public string Email { get; private set; }
 
-    private string _email;
+    public string Password { get; private set; }
 
-    private bool _isActive;
+    public bool IsActive { get; private set; }
 
     private string _firstName;
 
     private string _lastName;
 
-    private string _name;
+    public string Name { get; private set; }
 
     private List<UserRole> _roles;
 
@@ -80,13 +80,13 @@ public class User : BaseEntity
     {
         Id = new UserId(id);
         _login = login;
-        _password = password;
-        _email = email;
+        Password = password;
+        Email = email;
         _firstName = firstName;
         _lastName = lastName;
-        _name = name;
+        Name = name;
 
-        _isActive = true;
+        IsActive = true;
 
         _roles = new List<UserRole>();
         _roles.Add(role);
