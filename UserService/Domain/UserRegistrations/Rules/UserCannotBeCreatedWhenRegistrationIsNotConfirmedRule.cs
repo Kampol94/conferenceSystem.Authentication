@@ -1,18 +1,17 @@
-﻿using CompanyName.MyMeetings.BuildingBlocks.Domain;
+﻿using UserService.Domain.Contracts;
 
-namespace CompanyName.MyMeetings.Modules.UserAccess.Domain.UserRegistrations.Rules
+namespace UserService.Domain.UserRegistrations.Rules;
+
+public class UserCannotBeCreatedWhenRegistrationIsNotConfirmedRule : IBaseBusinessRule
 {
-    public class UserCannotBeCreatedWhenRegistrationIsNotConfirmedRule : IBusinessRule
+    private readonly UserRegistrationStatus _actualRegistrationStatus;
+
+    internal UserCannotBeCreatedWhenRegistrationIsNotConfirmedRule(UserRegistrationStatus actualRegistrationStatus)
     {
-        private readonly UserRegistrationStatus _actualRegistrationStatus;
-
-        internal UserCannotBeCreatedWhenRegistrationIsNotConfirmedRule(UserRegistrationStatus actualRegistrationStatus)
-        {
-            this._actualRegistrationStatus = actualRegistrationStatus;
-        }
-
-        public bool IsBroken() => _actualRegistrationStatus != UserRegistrationStatus.Confirmed;
-
-        public string Message => "User cannot be created when registration is not confirmed";
+        _actualRegistrationStatus = actualRegistrationStatus;
     }
+
+    public bool IsBroken() => _actualRegistrationStatus != UserRegistrationStatus.Confirmed;
+
+    public string Message => "User cannot be created when registration is not confirmed";
 }

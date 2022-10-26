@@ -1,20 +1,20 @@
 apiVersion : apps/v1
 kind: Deployment
 metadata:
-  name: conferencesystemmanagement 
+  name: conferencesystemuser 
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: conferencesystemmanagement
+      app: conferencesystemuser
   template:
     metadata:
       labels:
-        app: conferencesystemmanagement 
+        app: conferencesystemuser 
     spec:
       containers:
-        - name: conferencesystemmanagement 
-          image: conferencesystem.azurecr.io/conferencesystemmanagement
+        - name: conferencesystemuser 
+          image: conferencesystem.azurecr.io/conferencesystemuser
           ports:
             - containerPort: 80
               protocol: TCP
@@ -26,5 +26,5 @@ spec:
             - name: ConnectionStrings__DefaultConnection
               valueFrom:
                 secretKeyRef:
-                  name: mmanagementmssql
+                  name: usermssql
                   key: constr

@@ -1,18 +1,22 @@
-﻿using CompanyName.MyMeetings.BuildingBlocks.Domain;
+﻿using UserService.Domain.Contracts;
 
-namespace CompanyName.MyMeetings.Modules.UserAccess.Domain.Users
+namespace UserService.Domain.Users;
+
+public class UserRole : ValueObject
 {
-    public class UserRole : ValueObject
+    public static UserRole Member => new UserRole(nameof(Member));
+
+    public static UserRole Administrator => new UserRole(nameof(Administrator));
+
+    public string Value { get; }
+
+    private UserRole(string value)
     {
-        public static UserRole Member => new UserRole(nameof(Member));
+        Value = value;
+    }
 
-        public static UserRole Administrator => new UserRole(nameof(Administrator));
-
-        public string Value { get; }
-
-        private UserRole(string value)
-        {
-            this.Value = value;
-        }
+    protected override IEnumerable<object?> GetEqualityComponents()
+    {
+        yield return Value; 
     }
 }

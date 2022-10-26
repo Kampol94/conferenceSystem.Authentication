@@ -1,5 +1,4 @@
 ﻿using System.Runtime.Serialization;
-using UserService.Domain.Contracts;
 
 namespace UserService.Domain.Contracts.Exceptions;
 [Serializable]

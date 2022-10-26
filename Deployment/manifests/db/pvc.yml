@@ -10,7 +10,7 @@ parameters:
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: mmanagementdb-data
+  name: userdb-data
   annotations:
     volume.beta.kubernetes.io/storage-class: azure-disk
 spec:

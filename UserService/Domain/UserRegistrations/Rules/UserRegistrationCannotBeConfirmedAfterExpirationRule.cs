@@ -1,18 +1,16 @@
-﻿using CompanyName.MyMeetings.BuildingBlocks.Domain;
+﻿using UserService.Domain.Contracts;
+namespace UserService.Domain.UserRegistrations.Rules;
 
-namespace CompanyName.MyMeetings.Modules.UserAccess.Domain.UserRegistrations.Rules
+public class UserRegistrationCannotBeConfirmedAfterExpirationRule : IBaseBusinessRule
 {
-    public class UserRegistrationCannotBeConfirmedAfterExpirationRule : IBusinessRule
+    private readonly UserRegistrationStatus _actualRegistrationStatus;
+
+    internal UserRegistrationCannotBeConfirmedAfterExpirationRule(UserRegistrationStatus actualRegistrationStatus)
     {
-        private readonly UserRegistrationStatus _actualRegistrationStatus;
-
-        internal UserRegistrationCannotBeConfirmedAfterExpirationRule(UserRegistrationStatus actualRegistrationStatus)
-        {
-            this._actualRegistrationStatus = actualRegistrationStatus;
-        }
-
-        public bool IsBroken() => _actualRegistrationStatus == UserRegistrationStatus.Expired;
-
-        public string Message => "User Registration cannot be confirmed because it is expired";
+        _actualRegistrationStatus = actualRegistrationStatus;
     }
+
+    public bool IsBroken() => _actualRegistrationStatus == UserRegistrationStatus.Expired;
+
+    public string Message => "User Registration cannot be confirmed because it is expired";
 }

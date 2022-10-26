@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mmanagementdb
+  name: userdb
 spec:
   replicas: 1
   selector:
      matchLabels:
-       app: mmanagementdb
+       app: userdb
   template:
     metadata:
       labels:
-        app: mmanagementdb
+        app: userdb
     spec:
       terminationGracePeriodSeconds: 30
       hostname: mssqlinst
       securityContext:
         fsGroup: 10001
       containers:
-      - name: mmanagementdb
+      - name: userdb
         image: mcr.microsoft.com/mssql/server:2019-latest
         ports:
         - containerPort: 1433
@@ -29,7 +29,7 @@ spec:
         - name: MSSQL_SA_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: mmanagementmssql
+              name: usermssql
               key: pwd
         volumeMounts:
         - name: managmentmssqldb
@@ -37,15 +37,15 @@ spec:
       volumes:
       - name: managmentmssqldb
         persistentVolumeClaim:
-          claimName: mmanagementdb-data
+          claimName: userdb-data
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: mmanagementdb
+  name: userdb
 spec:
   selector:
-    app: mmanagementdb
+    app: userdb
   ports:
     - protocol: TCP
       port: 1433

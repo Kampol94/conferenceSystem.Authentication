@@ -1,11 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿namespace UserService.Domain.UserRegistrations;
 
-namespace CompanyName.MyMeetings.Modules.UserAccess.Domain.UserRegistrations
+public interface IUserRegistrationRepository
 {
-    public interface IUserRegistrationRepository
-    {
-        Task AddAsync(UserRegistration userRegistration);
+    Task AddAsync(UserRegistration userRegistration);
 
-        Task<UserRegistration> GetByIdAsync(UserRegistrationId userRegistrationId);
-    }
+    Task<UserRegistration> GetByIdAsync(UserRegistrationId userRegistrationId);
 }

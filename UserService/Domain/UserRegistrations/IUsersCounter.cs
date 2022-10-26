@@ -1,7 +1,6 @@
-﻿namespace CompanyName.MyMeetings.Modules.UserAccess.Domain.UserRegistrations
+﻿namespace UserService.Domain.UserRegistrations;
+
+public interface IUsersCounter
 {
-    public interface IUsersCounter
-    {
-        int CountUsersWithLogin(string login);
-    }
+    int CountUsersWithLogin(string login);
 }

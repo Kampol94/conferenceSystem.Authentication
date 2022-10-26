@@ -9,7 +9,7 @@ public static class MigrationManager
     {
         using (var scope = webApp.Services.CreateScope())
         {
-            using (var appContext = scope.ServiceProvider.GetRequiredService<ManagementContext>())
+            using (var appContext = scope.ServiceProvider.GetRequiredService<UserContext>())
             {
                 try
                 {

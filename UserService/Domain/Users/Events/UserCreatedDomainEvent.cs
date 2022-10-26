@@ -1,14 +1,13 @@
-﻿using CompanyName.MyMeetings.BuildingBlocks.Domain;
+﻿using UserService.Domain.Contracts;
 
-namespace CompanyName.MyMeetings.Modules.UserAccess.Domain.Users.Events
+namespace UserService.Domain.Users.Events;
+
+public class UserCreatedDomainEvent : DomainEventBase
 {
-    public class UserCreatedDomainEvent : DomainEventBase
+    public UserCreatedDomainEvent(UserId id)
     {
-        public UserCreatedDomainEvent(UserId id)
-        {
-            Id = id;
-        }
-
-        public new UserId Id { get; }
+        Id = id;
     }
+
+    public new UserId Id { get; }
 }

@@ -6,12 +6,13 @@ resources:
 
 variables:
   dockerRegistryServiceConnection: 'db1d6c32-05cb-4e67-8d6b-f55fc4da8c62'
-  imageRepository: 'conferencesystemmanagement'
+  imageRepository: 'conferencesystemuser'
   containerRegistry: 'conferencesystem.azurecr.io'
   dockerfilePath: '**/Dockerfile'
   tag: '$(Build.BuildId)'
   imagePullSecret: 'conferencesystem11601c33-auth'
-  dbSecret: 'mmanagementmssql'
+  dbSecret: 'usermssql'
+  dbname: userdb
 
   vmImageName: 'ubuntu-latest'
 
@@ -67,7 +68,7 @@ stages:
               action: 'createSecret'
               secretType: 'generic'
               secretName: '$(dbSecret)'
-              secretArguments: '--from-literal=pwd=$(DbPwd) --from-literal=constr="Data Source=mmanagementdb;User ID=sa;Password=$(DbPwd);Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False"'
+              secretArguments: '--from-literal=pwd=$(DbPwd) --from-literal=constr="Data Source=$(dbname);User ID=sa;Password=$(DbPwd);Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False"'
 
           - task: KubernetesManifest@0
             displayName: Deploy DB to Kubernetes cluster
@@ -123,7 +124,7 @@ stages:
               action: 'createSecret'
               secretType: 'generic'
               secretName: '$(dbSecret)'
-              secretArguments: '--from-literal=pwd=$(DbPwd) --from-literal=constr="Data Source=mmanagementdb;User ID=sa;Password=$(DbPwd);Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False"'
+              secretArguments: '--from-literal=pwd=$(DbPwd) --from-literal=constr="Data Source=$(dbname);User ID=sa;Password=$(DbPwd);Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False"'
 
           - task: KubernetesManifest@0
             displayName: Deploy DB to Kubernetes cluster

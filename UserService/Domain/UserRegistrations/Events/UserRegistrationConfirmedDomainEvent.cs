@@ -1,14 +1,13 @@
-﻿using CompanyName.MyMeetings.BuildingBlocks.Domain;
+﻿using UserService.Domain.Contracts;
 
-namespace CompanyName.MyMeetings.Modules.UserAccess.Domain.UserRegistrations.Events
+namespace UserService.Domain.UserRegistrations.Events;
+
+public class UserRegistrationConfirmedDomainEvent : DomainEventBase
 {
-    public class UserRegistrationConfirmedDomainEvent : DomainEventBase
+    public UserRegistrationConfirmedDomainEvent(UserRegistrationId userRegistrationId)
     {
-        public UserRegistrationConfirmedDomainEvent(UserRegistrationId userRegistrationId)
-        {
-            UserRegistrationId = userRegistrationId;
-        }
-
-        public UserRegistrationId UserRegistrationId { get; }
+        UserRegistrationId = userRegistrationId;
     }
+
+    public UserRegistrationId UserRegistrationId { get; }
 }

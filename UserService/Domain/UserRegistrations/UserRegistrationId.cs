@@ -1,13 +1,11 @@
-﻿using System;
-using CompanyName.MyMeetings.BuildingBlocks.Domain;
+﻿using UserService.Domain.Contracts;
 
-namespace CompanyName.MyMeetings.Modules.UserAccess.Domain.UserRegistrations
+namespace UserService.Domain.UserRegistrations;
+
+public class UserRegistrationId : IdValueBase
 {
-    public class UserRegistrationId : TypedIdValueBase
+    public UserRegistrationId(Guid value)
+        : base(value)
     {
-        public UserRegistrationId(Guid value)
-            : base(value)
-        {
-        }
     }
 }
