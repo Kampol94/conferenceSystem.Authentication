@@ -12,33 +12,16 @@ namespace UserService.Application.Authentication.Authenticate;
 
 public class AuthenticateCommandHandler : ICommandHandler<AuthenticateCommand, AuthenticationResult>
 {
-    private readonly ISqlConnectionFactory _sqlConnectionFactory;
+    private readonly IUserRepository _userRepository;
 
-    public AuthenticateCommandHandler(ISqlConnectionFactory sqlConnectionFactory)
+    public AuthenticateCommandHandler(IUserRepository userRepository)
     {
-        _sqlConnectionFactory = sqlConnectionFactory;
+        _userRepository = userRepository;
     }
 
     public async Task<AuthenticationResult> Handle(AuthenticateCommand request, CancellationToken cancellationToken)
     {
-        var connection = _sqlConnectionFactory.GetOpenConnection();
-
-        const string sql = "SELECT " +
-                           "[User].[Id], " +
-                           "[User].[Login], " +
-                           "[User].[Name], " +
-                           "[User].[Email], " +
-                           "[User].[IsActive], " +
-                           "[User].[Password] " +
-                           "FROM [users].[Users] AS [User] " +
-                           "WHERE [User].[Login] = @Login";
-
-        var user = await connection.QuerySingleOrDefaultAsync<User>(
-            sql,
-            new
-            {
-                request.Login,
-            });
+        var user = _userRepository.GetAllAsync().Where(x => x.Login == request.Login).FirstOrDefault();
 
         if (user == null)
         {
@@ -55,21 +38,25 @@ public class AuthenticateCommandHandler : ICommandHandler<AuthenticateCommand, A
             return new AuthenticationResult("Incorrect login or password");
         }
 
-        var token = GenerateJwtToken(user);
+        var claims = new List<Claim>
+        {
+            new Claim(MyClaimTypes.Id, user.Id.Value.ToString()),
+            new Claim(MyClaimTypes.Name, user.Name),
+            new Claim(MyClaimTypes.Email, user.Email)
+        };
+
+        var token = GenerateJwtToken(claims);
 
         return new AuthenticationResult(token);
     }
 
-    private static Token GenerateJwtToken(User user)
+    private static Token GenerateJwtToken(List<Claim> claims)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes("BigSecret"); //TODO: change to appSetting 
+        var key = Encoding.ASCII.GetBytes("this is my custom Secret key for authentication"); //TODO: change to appSetting 
         var tokenDescriptor = new SecurityTokenDescriptor
         {
-            Subject = new ClaimsIdentity(new[] {
-                new Claim(MyClaimTypes.Name, user.Name),
-                new Claim(MyClaimTypes.Email, user.Email)
-            }),
+            Subject = new ClaimsIdentity(claims),
             Expires = DateTime.UtcNow.AddDays(7),
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
         };

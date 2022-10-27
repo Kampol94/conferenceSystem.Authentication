@@ -8,8 +8,6 @@ public class User : BaseEntity
 {
     public UserId Id { get; private set; }
 
-    private string _login;
-
     public string Email { get; private set; }
 
     public string Password { get; private set; }
@@ -21,6 +19,7 @@ public class User : BaseEntity
     private string _lastName;
 
     public string Name { get; private set; }
+    public string Login { get; private set; }
 
     private List<UserRole> _roles;
 
@@ -79,7 +78,7 @@ public class User : BaseEntity
         UserRole role)
     {
         Id = new UserId(id);
-        _login = login;
+        Login = login;
         Password = password;
         Email = email;
         _firstName = firstName;

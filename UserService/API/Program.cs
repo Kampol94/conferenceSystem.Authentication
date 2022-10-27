@@ -1,9 +1,14 @@
-using IdentityServer4.AccessTokenValidation;
+using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Text;
 using UserService.API;
 using UserService.Application;
 using UserService.Application.Contracts;
-using UserService.Application.IdentityServer;
+using UserService.Application.Contracts.Commands;
 using UserService.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -44,21 +49,18 @@ builder.Services.AddSwaggerGen(options =>
                 });
 });
 
-builder.Services.AddIdentityServer()
-                .AddInMemoryIdentityResources(IdentityServerConfig.GetIdentityResources())
-                .AddInMemoryApiResources(IdentityServerConfig.GetApis())
-                .AddInMemoryClients(IdentityServerConfig.GetClients())
-                .AddInMemoryPersistedGrants()
-                .AddProfileService<ProfileService>()
-                .AddDeveloperSigningCredential();
-
-builder.Services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
-                .AddIdentityServerAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme, x =>
-                {
-                    x.Authority = "http://localhost:5000";
-                    x.ApiName = "userAPI";
-                    x.RequireHttpsMetadata = false;
-                });
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+{
+    options.RequireHttpsMetadata = false;
+    options.TokenValidationParameters = new TokenValidationParameters()
+    {
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("this is my custom Secret key for authentication")),
+        ValidateIssuer = false,
+        ValidateAudience = false,
+        ClockSkew = TimeSpan.Zero
+    };
+});
 
 var app = builder.Build();
 
@@ -69,6 +71,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

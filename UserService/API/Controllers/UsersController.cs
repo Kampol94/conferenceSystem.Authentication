@@ -8,6 +8,7 @@ namespace UserService.API.Controllers;
 public class UsersController : BaseApiController
 {
     [HttpPost("authenticate")]
+    [AllowAnonymous]
     public async Task<IActionResult> Authenticate([FromBody] AuthenticateCommand command)
     {
         var result = await Mediator.Send(command);

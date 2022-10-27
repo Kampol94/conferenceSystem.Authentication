@@ -29,9 +29,9 @@ internal class GetAuthenticatedUserPermissionsQueryHandler : IQueryHandler<GetAu
         var connection = _sqlConnectionFactory.GetOpenConnection();
 
         const string sql = "SELECT " +
-                           "[UserPermission].[PermissionCode] AS [Code] " +
-                           "FROM [users].[UserPermissions] AS [UserPermission] " +
-                           "WHERE [UserPermission].UserId = @UserId";
+                           "[UserRole].RoleCode AS [Code] " +
+                           "FROM [users].[UserRoles] AS [UserRole] " +
+                           "WHERE [UserRole].UserId = @UserId";
         var permissions = await connection.QueryAsync<UserPermissionDto>(
             sql,
             new { _executionContextAccessor.UserId });

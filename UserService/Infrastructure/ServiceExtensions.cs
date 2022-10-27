@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using UserService.Application.Contracts;
 using UserService.Domain.UserRegistrations;
 using UserService.Domain.Users;
+using UserService.Infrastructure.Domain;
 using UserService.Infrastructure.Domain.UserRegistrations;
 using UserService.Infrastructure.Domain.Users;
 using UserService.Infrastructure.Services;
@@ -22,6 +23,7 @@ public static class ServiceExtensions
 
         services.AddTransient<IUserRegistrationRepository, UserRegistrationRepository>();
         services.AddTransient<IUserRepository, UserRepository>();
+        services.AddTransient<IRepository, Repository>();
         services.AddTransient<IEmailSender, EmailSender>();
         services.AddTransient<IEventsBus, EventBus>();
         services.AddTransient<ISqlConnectionFactory, SqlConnectionFactory>(x => new SqlConnectionFactory(configuration.GetConnectionString("DefaultConnection")));

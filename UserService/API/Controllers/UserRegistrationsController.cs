@@ -20,8 +20,8 @@ public class UserRegistrationsController : BaseApiController
     [AllowAnonymous]
     [HttpPatch("{userRegistrationId}/confirm")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<IActionResult> ConfirmRegistration(ConfirmUserRegistrationCommand request)
+    public async Task<IActionResult> ConfirmRegistration([FromRoute] Guid userRegistrationId)
     {
-        return Ok(await Mediator.Send(request));
+        return Ok(await Mediator.Send(new ConfirmUserRegistrationCommand(userRegistrationId)));
     }
 }

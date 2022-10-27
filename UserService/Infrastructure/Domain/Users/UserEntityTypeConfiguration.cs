@@ -14,13 +14,13 @@ internal class UserEntityTypeConfiguration : IEntityTypeConfiguration<User>
         builder.Property<UserId>("Id").HasConversion(v => v.Value, c => new UserId(c));
         builder.HasKey("Id");
 
-        builder.Property<string>("_login").HasColumnName("Login");
-        builder.Property<string>("_email").HasColumnName("Email");
-        builder.Property<string>("_password").HasColumnName("Password");
-        builder.Property<bool>("_isActive").HasColumnName("IsActive");
+        builder.Property(x => x.Login).HasColumnName("Login");
+        builder.Property(x => x.Email).HasColumnName("Email");
+        builder.Property(x => x.Password).HasColumnName("Password");
+        builder.Property(x => x.IsActive).HasColumnName("IsActive");
         builder.Property<string>("_firstName").HasColumnName("FirstName");
         builder.Property<string>("_lastName").HasColumnName("LastName");
-        builder.Property<string>("_name").HasColumnName("Name");
+        builder.Property(x => x.Name).HasColumnName("Name");
 
         builder.OwnsMany<UserRole>("_roles", b =>
         {

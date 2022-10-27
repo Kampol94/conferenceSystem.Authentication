@@ -14,5 +14,12 @@ public class UserRepository : IUserRepository
     public async Task AddAsync(User user)
     {
         await _userContext.Users.AddAsync(user);
+
+        _userContext.SaveChanges();
+    }
+
+    public IQueryable<User> GetAllAsync()
+    {
+        return _userContext.Users.AsQueryable();
     }
 }

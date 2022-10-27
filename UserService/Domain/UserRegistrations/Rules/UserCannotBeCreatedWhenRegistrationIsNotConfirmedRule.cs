@@ -11,7 +11,7 @@ public class UserCannotBeCreatedWhenRegistrationIsNotConfirmedRule : IBaseBusine
         _actualRegistrationStatus = actualRegistrationStatus;
     }
 
-    public bool IsBroken() => _actualRegistrationStatus != UserRegistrationStatus.Confirmed;
+    public bool IsBroken() => !_actualRegistrationStatus.Equals(UserRegistrationStatus.Confirmed);
 
     public string Message => "User cannot be created when registration is not confirmed";
 }

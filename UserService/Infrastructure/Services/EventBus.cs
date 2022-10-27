@@ -10,16 +10,14 @@ internal class EventBus : IEventsBus
 {
     public Task Publish<T>(T @event) where T : IntegrationEvent
     {
-        throw new NotImplementedException();
+        return Task.CompletedTask; 
     }
 
     public void StartConsuming()
     {
-        throw new NotImplementedException();
     }
 
     public void Subscribe<T>(IIntegrationEventHandler<T> handler) where T : IntegrationEvent
     {
-        throw new NotImplementedException();
     }
 }
