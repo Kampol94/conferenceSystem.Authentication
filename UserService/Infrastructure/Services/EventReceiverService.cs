@@ -1,13 +1,14 @@
 using Microsoft.Extensions.Hosting;
+using UserService.Application.Contracts;
 
 namespace UserService.Infrastructure.Services;
 
 public class EventReceiverService : IHostedService
 {
-    private readonly IEventBus _eventBus;
+    private readonly IEventsBus _eventBus;
     private Timer? _timer = null;
 
-    public EventReceiverService(IEventBus eventBus)
+    public EventReceiverService(IEventsBus eventBus)
     {
         _eventBus = eventBus;
     }
