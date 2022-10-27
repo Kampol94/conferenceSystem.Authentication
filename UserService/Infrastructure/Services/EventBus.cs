@@ -1,6 +1,7 @@
 ﻿using IdentityServer4.Models;
 using MediatR;
 using Microsoft.AspNetCore.Connections;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -12,12 +13,12 @@ using System.Threading.Tasks;
 using UserService.Application.Contracts;
 
 namespace UserService.Infrastructure.Services;
-public class EventBus : IEventsBus
+public class EventBus : IEventBus
 {
     private readonly IModel _channel;
     private Dictionary<string, EventingBasicConsumer> _consumers = new();
 
-    public EventBus(IMediator mediator)
+    public EventBus(IServiceProvider services)
     {
         ConnectionFactory factory = new()
         {
@@ -40,20 +41,24 @@ public class EventBus : IEventsBus
         _channel.BasicPublish(exchange: typeof(T).Name, routingKey: "", body: body);
     }
 
-    public void Subscribe<T>(IIntegrationEventHandler<T> handler) where T : IntegrationEvent
+    public void Subscribe<U>(IServiceProvider services) where U : IntegrationEvent
     {
-        _channel.ExchangeDeclare(exchange: typeof(T).Name, type: ExchangeType.Fanout);
-        var queueName = _channel.QueueDeclare(queue: "ManagementService_" + typeof(T).Name).QueueName;
+        _channel.ExchangeDeclare(exchange: typeof(U).Name, type: ExchangeType.Fanout);
+        var queueName = _channel.QueueDeclare(queue: "UserService_" + typeof(U).Name).QueueName;
         _channel.QueueBind(queue: queueName,
-                              exchange: typeof(T).Name,
+                              exchange: typeof(U).Name,
                               routingKey: "");
         //Set Event object which listen message from chanel which is sent by producer
         EventingBasicConsumer consumer = new(_channel);
         consumer.Received += (model, eventArgs) =>
         {
-            byte[] body = eventArgs.Body.ToArray();
-            T? @event = JsonConvert.DeserializeObject<T>(Encoding.UTF8.GetString(body));
-            _ = handler.Handle(@event);
+            using (var scope = services.CreateScope())
+            {
+                byte[] body = eventArgs.Body.ToArray();
+                U? @event = JsonConvert.DeserializeObject<U>(Encoding.UTF8.GetString(body));
+                var handler = scope.ServiceProvider.GetRequiredService<IIntegrationEventHandler<U>>();
+                handler.Handle(@event);
+            } 
         };
         _consumers.Add(queueName, consumer);
     }

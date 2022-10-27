@@ -25,7 +25,7 @@ public static class ServiceExtensions
         services.AddTransient<IUserRepository, UserRepository>();
         services.AddTransient<IRepository, Repository>();
         services.AddTransient<IEmailSender, EmailSender>();
-        services.AddTransient<IEventsBus, EventBus>();
+        services.AddTransient<IEventBus, EventBus>();
         services.AddTransient<ISqlConnectionFactory, SqlConnectionFactory>(x => new SqlConnectionFactory(configuration.GetConnectionString("DefaultConnection")));
         services.AddHostedService<EventReceiverService>();
 

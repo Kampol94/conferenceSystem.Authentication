@@ -7,9 +7,9 @@ namespace UserService.Application.UserRegistrations.DomainEventHandlers;
 
 public class NewUserRegisteredPublishEventHandler : INotificationHandler<NewUserRegisteredDomainEvent>
 {
-    private readonly IEventsBus _eventsBus;
+    private readonly IEventBus _eventsBus;
 
-    public NewUserRegisteredPublishEventHandler(IEventsBus eventsBus)
+    public NewUserRegisteredPublishEventHandler(IEventBus eventsBus)
     {
         _eventsBus = eventsBus;
     }

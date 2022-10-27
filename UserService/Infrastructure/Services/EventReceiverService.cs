@@ -5,10 +5,10 @@ namespace UserService.Infrastructure.Services;
 
 public class EventReceiverService : IHostedService
 {
-    private readonly IEventsBus _eventBus;
+    private readonly IEventBus _eventBus;
     private Timer? _timer = null;
 
-    public EventReceiverService(IEventsBus eventBus)
+    public EventReceiverService(IEventBus eventBus)
     {
         _eventBus = eventBus;
     }
