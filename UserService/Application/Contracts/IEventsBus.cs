@@ -7,4 +7,6 @@ public interface IEventsBus
 
     void Subscribe<T>(IIntegrationEventHandler<T> handler)
         where T : IntegrationEvent;
+        
+    void Consume();
 }

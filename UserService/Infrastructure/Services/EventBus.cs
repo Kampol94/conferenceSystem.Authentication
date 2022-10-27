@@ -14,56 +14,55 @@ using UserService.Application.Contracts;
 namespace UserService.Infrastructure.Services;
 public class EventBus : IEventsBus
 {
-    private readonly IMediator _mediator;
+    private readonly IModel _channel;
+    private Dictionary<string, EventingBasicConsumer> _consumers = new();
 
     public EventBus(IMediator mediator)
     {
-        _mediator = mediator;
+        ConnectionFactory factory = new()
+        {
+            HostName = "rabbitmq"
+        };
+        //Create the RabbitMQ connection using connection factory details as i mentioned above
+        IConnection connection = factory.CreateConnection();
+        //Here we create channel with session and model  
+        _channel = connection.CreateModel();
     }
 
     public void Publish<T>(T @event) where T : IntegrationEvent
     {
-        //Here we specify the Rabbit MQ Server. we use rabbitmq docker image and use it
-        var factory = new ConnectionFactory
-        {
-            HostName = "rabbitmq"
-        };
-        //Create the RabbitMQ connection using connection factory details as i mentioned above
-        var connection = factory.CreateConnection();
-        //Here we create channel with session and model
-        using
-        var channel = connection.CreateModel();
-        //declare the queue after mentioning name and a few property related to that
-        channel.QueueDeclare(typeof(T).Name, exclusive: false);
+        _channel.ExchangeDeclare(typeof(T).Name, ExchangeType.Fanout);
+        //_channel.QueueDeclare(typeof(T).Name, exclusive: false);
         //Serialize the message
-        var json = JsonConvert.SerializeObject(@event);
-        var body = Encoding.UTF8.GetBytes(json);
+        string json = JsonConvert.SerializeObject(@event);
+        byte[] body = Encoding.UTF8.GetBytes(json);
         //put the data on to the product queue
-        channel.BasicPublish(exchange: "", routingKey: typeof(T).Name, body: body);
+        _channel.BasicPublish(exchange: typeof(T).Name, routingKey: "", body: body);
     }
 
     public void Subscribe<T>(IIntegrationEventHandler<T> handler) where T : IntegrationEvent
     {
-        var factory = new ConnectionFactory
-        {
-            HostName = "rabbitmq"
-        };
-        //Create the RabbitMQ connection using connection factory details as i mentioned above
-        var connection = factory.CreateConnection();
-        //Here we create channel with session and model
-        using
-        var channel = connection.CreateModel();
-        //declare the queue after mentioning name and a few property related to that
-        channel.QueueDeclare(nameof(T), exclusive: false);
+        _channel.ExchangeDeclare(exchange: typeof(T).Name, type: ExchangeType.Fanout);
+        var queueName = _channel.QueueDeclare(queue: "ManagementService_" + typeof(T).Name).QueueName;
+        _channel.QueueBind(queue: queueName,
+                              exchange: typeof(T).Name,
+                              routingKey: "");
         //Set Event object which listen message from chanel which is sent by producer
-        var consumer = new EventingBasicConsumer(channel);
-        consumer.Received += (model, eventArgs) => {
-            var body = eventArgs.Body.ToArray();
-            var @event = JsonConvert.DeserializeObject<T>(Encoding.UTF8.GetString(body));
-            handler.Handle(@event);
-            Console.WriteLine(@event);
+        EventingBasicConsumer consumer = new(_channel);
+        consumer.Received += (model, eventArgs) =>
+        {
+            byte[] body = eventArgs.Body.ToArray();
+            T? @event = JsonConvert.DeserializeObject<T>(Encoding.UTF8.GetString(body));
+            _ = handler.Handle(@event);
         };
-        //read the message
-        channel.BasicConsume(queue: nameof(T), autoAck: true, consumer: consumer);
+        _consumers.Add(queueName, consumer);
+    }
+
+    public void Consume()
+    {
+        foreach (var consumer in _consumers)
+        {
+            _channel.BasicConsume(queue: consumer.Key, autoAck: true, consumer: consumer.Value);
+        }
     }
 }
