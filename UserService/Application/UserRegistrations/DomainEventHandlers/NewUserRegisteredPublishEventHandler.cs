@@ -14,9 +14,9 @@ public class NewUserRegisteredPublishEventHandler : INotificationHandler<NewUser
         _eventsBus = eventsBus;
     }
 
-    public async Task Handle(NewUserRegisteredDomainEvent @event, CancellationToken cancellationToken)
+    public Task Handle(NewUserRegisteredDomainEvent @event, CancellationToken cancellationToken)
     {
-        await _eventsBus.Publish(new NewUserRegisteredIntegrationEvent(
+         _eventsBus.Publish(new NewUserRegisteredIntegrationEvent(
             @event.Id,
             @event.When,
             @event.UserRegistrationId.Value,
@@ -25,5 +25,6 @@ public class NewUserRegisteredPublishEventHandler : INotificationHandler<NewUser
             @event.FirstName,
             @event.LastName,
             @event.Name));
+        return Task.CompletedTask;
     }
 }
